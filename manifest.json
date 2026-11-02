@@ -1,0 +1,130 @@
+{
+ "version": "v3.40.1",
+ "env": "sandbox",
+ "built_at": "2026-11-02T06:44:05.382Z",
+ "closure_sha256": "70010c502ca14d3f10cea53a4b5dfbc49119d59aa4bc6b61d66ac96300261cd7",
+ "contract": "1",
+ "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
+ "files": {
+  ".nojekyll": {
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "index.html": {
+   "bytes": 1342024,
+   "sha256": "8937c155c11753bbf644643cb18c6d7e196071d49eff94fa76c194120cfc3f59"
+  },
+  "modules/estimator-c24ec797.css": {
+   "bytes": 22843,
+   "sha256": "c24ec7977c75fa53d227919de503670fd4ee040261a0cc5ad095d7d2565c8068"
+  },
+  "modules/estimator-d24dfaa8.js": {
+   "bytes": 960272,
+   "sha256": "d24dfaa81e9d30621c88f81c74e3c3fd677cf64b93e3e21d9ba6c3d2a2a91860"
+  },
+  "modules/hello-BoVXc-Gi.css": {
+   "bytes": 112,
+   "sha256": "46e99367cb860b5b9373e0d3e3e103b85bbb74bd93ad23184c086e735fccd734"
+  },
+  "modules/hello-Cmcsduju.js": {
+   "bytes": 1866,
+   "sha256": "771fed281eeb499b287144a060218555ecc0f4d7c4282eadc233e17dc6f7d11d"
+  },
+  "modules/tracker-budget-BnuMjRt1.js": {
+   "bytes": 7987,
+   "sha256": "2228c04091e01b1aa4d06ffb51ca9983d78cacd385b945640e2ca180466f93a9"
+  },
+  "modules/tracker-budget-MPBDL32R.css": {
+   "bytes": 3116,
+   "sha256": "91ef3a2771ffdadd28d85a9baffb1d3439bf02cce5fc6825b7c8ae45dc16d8b8"
+  },
+  "modules/tracker-financials-DSkTUb-T.css": {
+   "bytes": 4662,
+   "sha256": "a3eb44dd88b0916775c17ac2599aebca4453b151a5ef94da2dc40bc45d090e97"
+  },
+  "modules/tracker-financials-D_VVR6JC.js": {
+   "bytes": 12301,
+   "sha256": "a6a561555eb09197aaffcbebea5ce51eb50e9e691934ed5ef026a8342d4663dd"
+  },
+  "modules/tracker-import-76UH20po.css": {
+   "bytes": 898,
+   "sha256": "e30068dc0ce6bf2e98bc0cf6d1e5d3753520a7e6e14e002233fd3b81a68d7efa"
+  },
+  "modules/tracker-import-D_7mgox8.js": {
+   "bytes": 10006,
+   "sha256": "5292838e685d7e60345581cfc424de016609073695b259d2bcd817036b819ae3"
+  }
+ },
+ "modules": {
+  "estimator": {
+   "budget": {
+    "css": 120000,
+    "js": 1000000
+   },
+   "capability": "estimating",
+   "css": "modules/estimator-c24ec797.css",
+   "id": "estimator",
+   "js": "modules/estimator-d24dfaa8.js",
+   "title": "Estimator",
+   "vendored": {
+    "built_at": "2026-11-02T06:44:04.694Z",
+    "source_commit": "7efdfc3b10d23deb2296e5cac3c2b10930516b4b",
+    "source_repo": "Synchronous-Building-Automation/estimator",
+    "version": "0.6.0"
+   }
+  },
+  "hello": {
+   "budget": {
+    "css": 2000,
+    "js": 12000
+   },
+   "capability": "hello",
+   "css": "modules/hello-BoVXc-Gi.css",
+   "id": "hello",
+   "js": "modules/hello-Cmcsduju.js",
+   "title": "Hello"
+  },
+  "tracker": {
+   "capability": null,
+   "id": "tracker",
+   "inline": "__trackerStart",
+   "title": "Budget Tracker"
+  },
+  "tracker-budget": {
+   "budget": {
+    "css": 3740,
+    "js": 9537
+   },
+   "capability": "budget",
+   "css": "modules/tracker-budget-MPBDL32R.css",
+   "id": "tracker-budget",
+   "js": "modules/tracker-budget-BnuMjRt1.js",
+   "kind": "view",
+   "title": "Budget"
+  },
+  "tracker-financials": {
+   "budget": {
+    "css": 5595,
+    "js": 14762
+   },
+   "capability": "financials",
+   "css": "modules/tracker-financials-DSkTUb-T.css",
+   "id": "tracker-financials",
+   "js": "modules/tracker-financials-D_VVR6JC.js",
+   "kind": "view",
+   "title": "Financials"
+  },
+  "tracker-import": {
+   "budget": {
+    "css": 3000,
+    "js": 40000
+   },
+   "capability": null,
+   "css": "modules/tracker-import-76UH20po.css",
+   "id": "tracker-import",
+   "js": "modules/tracker-import-D_7mgox8.js",
+   "kind": "dialog",
+   "title": "Import from estimate file"
+  }
+ }
+}
