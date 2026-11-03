@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="sba-consent" content="v3.43">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>SANDBOX &#xB7; Connect Claude &#x2014; SBA Platform</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+<!--
+  The OAuth consent page's TEMPLATE (v3.43, SPEC-v3.43-claude-connector.md clause 3.5, lane P). build-deploy.mjs
+  (lib/consent-page.mjs) composes consent.html at the root of each environment's deploy from it: tokens.css verbatim at
+  SBA-TOKENS, the environment banner at SBA-BANNER (staging only), and at SBA-SCRIPT one script element holding the prelude
+  (var SBA_ENV, the environment's URL and anon key), the pinned SDK loader (src/shell/sdk-loader.js) and consent.js. No
+  shell. Every size and colour is a token of tokens.css. Plain characters only.
+-->
+<style>
+/* src/shell/tokens.css: the ONE token file (SPEC-v3.31-build-pipeline-and-tokens.md clause 4.1).
+   The composition inlines it verbatim at the top of the page's one <style>, ahead of ui.css, the shell's
+   own CSS and the legacy CSS still in budget-app.html. Four blocks: light :root, automatic dark (guarded so
+   an explicit light choice wins), explicit dark, explicit light. Plain characters only.
+   Brand (D-P4-3, the brand guideline): navy 1D1660, Electric Blue 00B5EF, Pink E34397, Orange F9A54E; controls
+   are Electric Blue on Navy (the accent: navy with white text on light, Electric Blue with navy text on dark).
+   The "Ledger" logo gradient and its violet stop are a brand asset and are NOT recoloured (brand/README.md). */
+  :root{
+    --navy:#1D1660; --blue:#00B5EF; --pink:#E34397; --orange:#F9A54E; --violet:#4E4A9E;
+    --brand-grad:linear-gradient(45deg,#F58A46 0%,#EC2C86 35%,#4E4A9E 68%,#29ABE2 100%);
+    --bg:#F5F5FA; --surface:#FFFFFF; --surface-2:#FAFAFE; --ink:#1A1638; --muted:#6A6790;
+    --line:#E5E3F0; --line-strong:#D2CFE4; --accent:#1D1660; --accent-ink:#FFFFFF; --accent-soft:#ECEAF7;
+    --pos:#12886A; --neg:#D64550; --pos-soft:#E1F4EE; --neg-soft:#FBE7E9; --neg-strong:#BF3540;
+    --warn:#9A6B00; --warn-soft:#FDEFC0; --warn-bar:#D99A00; --ink-on-fill:#FFFFFF;
+    --shadow:0 1px 2px rgba(36,28,92,.06),0 8px 24px rgba(36,28,92,.06);
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-7:32px;
+    --text-xs:11px; --text-sm:12.5px; --text-md:14px; --text-lg:16px; --text-xl:19px; --text-2xl:23px;
+    --r-xs:4px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px; --r:var(--r-md);
+    --z-base:0; --z-sticky:10; --z-pop:40; --z-modal:50; --z-toast:60;
+    --f:"Roboto",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+    --row-compact:28px; --row-comfortable:36px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#14112E; --surface:#1E1A42; --surface-2:#272254; --ink:#ECEAF8; --muted:#A9A6C8;
+      --line:#332C63; --line-strong:#443C7C; --accent:#00B5EF; --accent-ink:#1D1660; --accent-soft:#2A2560;
+      --pos:#43C99B; --neg:#F0757F; --pos-soft:#123A30; --neg-soft:#3A1B20; --neg-strong:#F0757F;
+      --warn:#F4C65A; --warn-soft:#4A3A12; --warn-bar:#D99A00;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14112E; --surface:#1E1A42; --surface-2:#272254; --ink:#ECEAF8; --muted:#A9A6C8;
+    --line:#332C63; --line-strong:#443C7C; --accent:#00B5EF; --accent-ink:#1D1660; --accent-soft:#2A2560;
+    --pos:#43C99B; --neg:#F0757F; --pos-soft:#123A30; --neg-soft:#3A1B20; --neg-strong:#F0757F;
+    --warn:#F4C65A; --warn-soft:#4A3A12; --warn-bar:#D99A00;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F5FA; --surface:#FFFFFF; --surface-2:#FAFAFE; --ink:#1A1638; --muted:#6A6790;
+    --line:#E5E3F0; --line-strong:#D2CFE4; --accent:#1D1660; --accent-ink:#FFFFFF; --accent-soft:#ECEAF7;
+    --pos:#12886A; --neg:#D64550; --pos-soft:#E1F4EE; --neg-soft:#FBE7E9; --neg-strong:#BF3540;
+    --warn:#9A6B00; --warn-soft:#FDEFC0; --warn-bar:#D99A00;
+    --shadow:0 1px 2px rgba(36,28,92,.06),0 8px 24px rgba(36,28,92,.06);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:var(--text-md);line-height:1.5;-webkit-font-smoothing:antialiased}
+  main{max-width:440px;margin:var(--space-7) auto;padding:var(--space-6);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);text-align:center}
+  h1{font-size:var(--text-xl);font-weight:500;margin:0 0 var(--space-4)}
+  p{margin:0 0 var(--space-3)}
+  .logo{width:52px;height:60px;display:block;margin:0 auto var(--space-3)}
+  .logo .bar{fill:none;stroke:var(--navy);stroke-width:10;stroke-linecap:round}
+  :root[data-theme="dark"] .logo .bar{stroke:var(--ink-on-fill)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo .bar{stroke:var(--ink-on-fill)}}
+  .muted{color:var(--muted);font-size:var(--text-sm)}
+  .msg{color:var(--ink);font-size:var(--text-sm);min-height:1em}
+  .msg[role="alert"]{color:var(--neg);font-weight:500}
+  .ask{background:var(--accent-soft);border-radius:var(--r-md);padding:var(--space-3)}
+  .row{display:flex;gap:var(--space-3);justify-content:center;margin:var(--space-4) 0 var(--space-2)}
+  .btn{font:inherit;font-weight:500;padding:var(--space-2) var(--space-5);border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer}
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .btn[disabled]{opacity:.6;cursor:default}
+  .link{font:inherit;background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer}
+  #cGoogle{width:100%}
+  #cMagic{width:100%;margin-bottom:var(--space-2)}
+  input{font:inherit;width:100%;padding:var(--space-2) var(--space-3);margin:0 0 var(--space-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--surface-2);color:var(--ink)}
+  .odiv{color:var(--muted);font-size:var(--text-sm);margin:var(--space-4) 0 var(--space-2)}
+  #envBanner{background:var(--warn-soft);color:var(--warn);border-bottom:2px solid var(--warn);font-weight:600;font-size:var(--text-sm);text-align:center;padding:var(--space-2) var(--space-3)}
+</style>
+</head>
+<body>
+<div id="envBanner" role="status">SANDBOX — estimator test build for Tom; data is a copy, nothing here reaches the live app</div>
+<main id="consent" aria-live="polite"><p class="muted">Loading&#x2026;</p></main>
+<script id="consent">var SBA_ENV={"name":"sandbox","label":"sandbox","sb_url":"https://qdgigkhhfvpcakjqmlfp.supabase.co","sb_key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkZ2lna2hoZnZwY2FranFtbGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1OTg3OTIsImV4cCI6MjEwOTE3NDc5Mn0.PyJMuUEYQSs3958Mbcro_SQeAOLenGzGuEZMlbMG1lc","app_url":"derive","page_url":"https://synchronous-staging.github.io/estimator-sandbox/"};
+// src/shell/sdk-loader.js (v3.32, SPEC-v3.32-shell-proper.md clauses 6.1 and 10.2): NOT a module. The exact text of the
+// legacy page's loadSDK() (budget-app.html v3.31.1, lines 17604 to 17610, the two-space indentation kept), which the build
+// inlines VERBATIM into the prelude of the shell script element, so loadSDK is a page global. Its lines 2 to 6 are the
+// canonical SRI block (build-deploy.mjs SDK.block, exactly once here, SDK.loaderCounts); nothing else on the page or in
+// the shell may create a script element. A change here is a change to the pinned loader: review it with the pin.
+function loadSDK(){ return new Promise((res,rej)=>{ if(window.supabase)return res();
+  const s=document.createElement('script');
+  // pinned version + SRI: the CDN cannot silently swap the code that runs inside a signed-in finance session
+  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.0/dist/umd/supabase.min.js';
+  s.integrity='sha384-De+l/Df7qym5QBDVocD3+gW1S7IjR3epf+6KbRDjB3FCCzM/LqVTwqckT6FhFar8';
+  s.crossOrigin='anonymous';
+  s.onload=()=>res(); s.onerror=()=>rej(new Error('SDK load failed')); document.head.appendChild(s); }); }
+// src/consent/consent.js (v3.43, SPEC-v3.43-claude-connector.md clause 3.5, lane P): the OAuth consent page's logic.
+// Supabase Auth's OAuth 2.1 server sends the person here (Site URL plus /consent.html) with ?authorization_id=<id>. This
+// page: (1) reads the id and nothing else from the query (a missing id: it says so and stops); (2) makes sure the person
+// is signed in, by the shell's TWO methods and no other (signin.js: the magic link with shouldCreateUser false, and
+// Google; there is no password sign-in, G-6), each redirecting back to THIS page with its query, so the person lands on
+// the same authorisation; (3) asks the SDK for the authorisation's details (an id that does not resolve, or a client
+// that is not one of the connector's, is refused and nothing is offered); (4) reads the person's own members row (RLS:
+// own row by e-mail; none: "you are not on the access list for this tool" and Deny only); (5) shows who Claude would act
+// as, with Approve and Deny, each following the redirect URL the SDK RETURNS, never one from the query.
+// D134 (3 Nov 2026): any platform member may connect; there is no connector key check on this page.
+//
+// NOT a module: build-deploy.mjs (lib/consent-page.mjs) inlines this file VERBATIM into consent.html after the prelude
+// (SBA_ENV and the pinned SDK loader, src/shell/sdk-loader.js). It creates no element and no script (the SRI pins on
+// consent.html count the loader's tokens only). Everything the logic touches is injected, so test/consent.test.mjs runs
+// sbaConsentRun in node:vm with a stubbed sb. Plain characters only (non-ASCII in strings as \u escapes).
+
+// the connector's OAuth clients, by the names Tom registers them under (spec 3.1); every other client is refused
+var SBA_CONSENT_CLIENTS = ['SBA Platform (Claude)', 'SBA Platform (Claude Code)'];
+
+function sbaConsentEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;'); }
+
+// the authorisation id: the one thing this page takes from the query
+function sbaConsentId(search) {
+  var m = /[?&]authorization_id=([^&#]*)/.exec(String(search || ''));
+  var id = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')).trim() : '';
+  return /^[A-Za-z0-9._-]{1,128}$/.test(id) ? id : '';
+}
+
+// the views a member row holds, as the app reads them (an array of keys; anything else is none)
+function sbaConsentViews(row) { return row && Array.isArray(row.views) ? row.views.filter(function (v) { return typeof v === 'string'; }) : []; }
+
+// sbaConsentRun(D): the page's flow. D = { sb, href, search, assign(url), show(view) }. Resolves to the last view shown.
+// A view is { kind, ... }; sbaConsentHtml(view) draws it and sbaConsentBind wires its buttons to D.act(name).
+async function sbaConsentRun(D) {
+  var show = function (v) { D.show(v); return v; };
+  var id = sbaConsentId(D.search);
+  if (!id) return show({ kind: 'no-id' });
+  var s = null;
+  try { s = await D.sb.auth.getSession(); } catch (e) { s = { data: null, error: e }; }
+  var session = s && s.data && s.data.session;
+  if (!session || !session.user || !session.user.email) return show({ kind: 'signin', id: id });
+  var email = String(session.user.email).toLowerCase();
+  var det = null;
+  try { det = await D.sb.auth.oauth.getAuthorizationDetails(id); } catch (e) { det = { data: null, error: e }; }
+  if (!det || det.error || !det.data) return show({ kind: 'refused', email: email, why: 'This authorisation request could not be read: ' + sbaConsentErr(det && det.error) + '. Start the connection again from Claude.' });
+  var d = det.data;
+  // an earlier consent: the server answers with the redirect at once (the client was checked when it was given)
+  var already = typeof d.authorization_id !== 'string' && typeof d.redirect_url === 'string';
+  var client = d.client && typeof d.client.name === 'string' ? d.client.name : '';
+  if (!already && SBA_CONSENT_CLIENTS.indexOf(client) < 0) return show({ kind: 'refused', email: email, why: 'This request comes from an app that is not the SBA Platform connector (' + (client || 'no name') + '). Nothing has been shared.' });
+  var mem = null;
+  try { mem = await D.sb.from('members').select('role,scope,views').eq('email', email).maybeSingle(); } catch (e) { mem = { data: null, error: e }; }
+  if (!mem || mem.error) return show({ kind: 'deny-only', id: id, email: email, why: 'Your access could not be read: ' + sbaConsentErr(mem && mem.error) + '. Try again, or deny.' });
+  if (!mem.data) return show({ kind: 'deny-only', id: id, email: email, why: 'you are not on the access list for this tool' });
+  if (already) { D.assign(d.redirect_url); return show({ kind: 'leaving', email: email }); }
+  var row = mem.data;
+  return show({ kind: 'ask', id: id, email: email, client: client, role: String(row.role || ''), scope: String(row.scope || ''), views: sbaConsentViews(row) });
+}
+
+function sbaConsentErr(e) { return e && e.message ? String(e.message) : 'no answer'; }
+
+// the decisions: Approve and Deny call the SDK with skipBrowserRedirect and follow the URL IT returns
+async function sbaConsentDecide(D, id, approve) {
+  var r = null;
+  var fn = approve ? 'approveAuthorization' : 'denyAuthorization';
+  try { r = await D.sb.auth.oauth[fn](id, { skipBrowserRedirect: true }); } catch (e) { r = { data: null, error: e }; }
+  var to = r && !r.error && r.data && typeof r.data.redirect_url === 'string' ? r.data.redirect_url : '';
+  if (!/^https?:\/\//i.test(to)) { D.show({ kind: 'error', why: (approve ? 'Approve' : 'Deny') + ' did not complete: ' + sbaConsentErr(r && r.error) + '. Start the connection again from Claude.' }); return null; }
+  D.assign(to);
+  D.show({ kind: 'leaving' });
+  return to;
+}
+
+// the sign-in: the shell's two methods, each back to THIS page with its query (the authorisation id rides along)
+async function sbaConsentMagic(D, email) {
+  var e = String(email || '').trim();
+  if (!e) return { error: { message: 'enter your work email' } };
+  var r = await D.sb.auth.signInWithOtp({ email: e, options: { emailRedirectTo: D.href, shouldCreateUser: false } });
+  return r || {};
+}
+async function sbaConsentGoogle(D) {
+  var r = await D.sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: D.href } });
+  return r || {};
+}
+
+var SBA_CONSENT_LOGO = '<svg class="logo" viewBox="0 0 100 116" role="img" aria-label="Synchronous Group"><defs><linearGradient id="sgrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#F58A46"/><stop offset="0.35" stop-color="#EC2C86"/><stop offset="0.68" stop-color="#4E4A9E"/><stop offset="1" stop-color="#29ABE2"/></linearGradient></defs><path d="M50 5 L95 31 L95 85 L50 111 L5 85 L5 31 Z" fill="none" stroke="url(#sgrad)" stroke-width="8" stroke-linejoin="round"/><path class="bar" d="M33 84 L33 68"/><path class="bar" d="M50 84 L50 54"/><path class="bar" d="M67 84 L67 40"/></svg>';
+
+// sbaConsentHtml(view): the card's HTML for a view; every value from the server or the person is escaped
+function sbaConsentHtml(v) {
+  var h = SBA_CONSENT_LOGO + '<h1>Connect Claude to the SBA Platform</h1>';
+  var who = v.email ? '<p class="muted">Signed in as <b>' + sbaConsentEsc(v.email) + '</b> <button type="button" class="link" id="cSignOut">not you?</button></p>' : '';
+  if (v.kind === 'no-id') return h + '<p class="msg" role="alert">This page needs an authorisation request from Claude, and none came with it. Start the connection again from Claude.</p>';
+  if (v.kind === 'signin') return h + '<p>Sign in with your platform login to continue.</p>'
+    + '<button type="button" id="cGoogle" class="btn">Continue with Google</button>'
+    + '<div class="odiv">or sign in with your work email</div>'
+    + '<input id="cEmail" type="email" placeholder="you@syncba.com.au" autocomplete="email">'
+    + '<button type="button" id="cMagic" class="btn primary">Send sign-in link</button><p class="msg" id="cMsg" role="status"></p>';
+  if (v.kind === 'refused') return h + who + '<p class="msg" role="alert">' + sbaConsentEsc(v.why) + '</p>';
+  if (v.kind === 'deny-only') return h + who + '<p class="msg" role="alert">' + sbaConsentEsc(v.why) + '</p>'
+    + '<div class="row"><button type="button" id="cDeny" class="btn">Deny</button></div><p class="msg" id="cMsg" role="status"></p>';
+  if (v.kind === 'ask') {
+    var views = v.views.length ? v.views.join(', ') : 'no views';
+    return h + who + '<p><b>' + sbaConsentEsc(v.client) + '</b> is asking to connect.</p>'
+      + '<p class="ask">Claude would like to use the SBA Platform as <b>' + sbaConsentEsc(v.email) + '</b> (' + sbaConsentEsc(v.role) + ', ' + sbaConsentEsc(v.scope) + ', ' + sbaConsentEsc(views) + ')</p>'
+      + '<p class="muted">Claude can then do what you can do in the app and nothing more. You can disconnect it at any time from Connected apps in the app.</p>'
+      + '<div class="row"><button type="button" id="cDeny" class="btn">Deny</button><button type="button" id="cApprove" class="btn primary">Approve</button></div><p class="msg" id="cMsg" role="status"></p>';
+  }
+  if (v.kind === 'leaving') return h + '<p class="muted">Returning you to Claude\u2026</p>';
+  if (v.kind === 'error') return h + '<p class="msg" role="alert">' + sbaConsentEsc(v.why) + '</p>';
+  return h + '<p class="muted">Loading\u2026</p>';
+}
+
+// sbaConsentBind(root, D, v): wires the buttons a view drew (in the browser only)
+function sbaConsentBind(root, D, v) {
+  var q = function (sel) { return root.querySelector(sel); };
+  var msg = function (t) { var m = q('#cMsg'); if (m) m.textContent = t; };
+  var b;
+  if ((b = q('#cSignOut'))) b.onclick = async function () { b.disabled = true; try { await D.sb.auth.signOut(); } catch (e) { /* the next run decides */ } sbaConsentRun(D); };
+  if ((b = q('#cApprove'))) b.onclick = async function () { this.disabled = true; msg('Approving\u2026'); await sbaConsentDecide(D, v.id, true); };
+  if ((b = q('#cDeny'))) b.onclick = async function () { this.disabled = true; msg('Denying\u2026'); await sbaConsentDecide(D, v.id, false); };
+  if ((b = q('#cMagic'))) {
+    var inp = q('#cEmail');
+    var go = async function () { b.disabled = true; msg('Sending\u2026');
+      var r = await sbaConsentMagic(D, inp && inp.value);
+      msg(r.error ? 'Error: ' + r.error.message : 'Check your email for the sign-in link. It brings you back to this page.'); b.disabled = false; };
+    b.onclick = go; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') go(); };
+  }
+  if ((b = q('#cGoogle'))) b.onclick = async function () { b.disabled = true; msg('Opening Google sign-in\u2026');
+    var r = await sbaConsentGoogle(D);
+    if (r.error) { msg(/not enabled|unsupported provider|validation_failed/i.test(r.error.message) ? "Google sign-in isn't switched on yet \u2014 use your work email below." : 'Error: ' + r.error.message); b.disabled = false; } };
+}
+
+// the boot, in the browser only (the prelude defines SBA_ENV and loadSDK)
+async function sbaConsentBoot() {
+  var root = document.getElementById('consent');
+  var D = { sb: null, href: location.href, search: location.search, assign: function (u) { location.assign(u); },
+    show: function (v) { root.innerHTML = sbaConsentHtml(v); sbaConsentBind(root, D, v); } };
+  try { await loadSDK(); } catch (e) { D.show({ kind: 'error', why: "Couldn't load the sign-in library. Check your connection and reload." }); return; }   // eslint-disable-line no-undef
+  D.sb = window.supabase.createClient(SBA_ENV.sb_url, SBA_ENV.sb_key);   // eslint-disable-line no-undef
+  await sbaConsentRun(D);
+}
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof SBA_ENV !== 'undefined') sbaConsentBoot();   // eslint-disable-line no-undef
+</script>
+</body>
+</html>
