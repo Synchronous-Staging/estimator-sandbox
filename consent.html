@@ -118,6 +118,10 @@ function loadSDK(){ return new Promise((res,rej)=>{ if(window.supabase)return re
 // Approve or Deny (and before an earlier consent's redirect is followed) and must still be that person; and a sign-in
 // change while the page is open (another tab signing someone else in, or out) withdraws the decision. A shared browser
 // switched from one person to another mid-page can no longer show one and approve for the other.
+// Review round 5 (R5-1, P2): each button's handler holds its own element ("not you?" read a shared variable at click time,
+// null by then, so it threw and signed no one out; the magic link disabled Google's button, N1). One decision at a time:
+// Approve and Deny both go off while one is sent, and sbaConsentDecide sends no second (N2). A sign-in change while the
+// page is still loading (before any view carries uid) makes that load stale, shown as changed (N3; N5 with it).
 //
 // NOT a module: build-deploy.mjs (lib/consent-page.mjs) inlines this file VERBATIM into consent.html after the prelude
 // (SBA_ENV and the pinned SDK loader, src/shell/sdk-loader.js). It creates no element and no script (the SRI pins on
@@ -171,9 +175,11 @@ function sbaConsentWatch(D) {
   D.sb.auth.onAuthStateChange(function (event, session) { sbaConsentOnAuth(D, session); });
 }
 function sbaConsentOnAuth(D, session) {
+  var u = sbaConsentWho(session && session.user);
+  // R5 (N3): while a run loads, an event naming anyone but the person it read (or no one) makes that run stale
+  if (D.base && !(u && u.id === D.base)) D.gen = (D.gen || 0) + 1;
   var v = D.cur;
   if (!v || !v.uid) return;
-  var u = sbaConsentWho(session && session.user);
   if (u && u.id === v.uid) return;
   sbaConsentShow(D, SBA_CONSENT_CHANGED);
 }
@@ -181,15 +187,19 @@ function sbaConsentOnAuth(D, session) {
 // sbaConsentRun(D): the page's flow. D = { sb, href, search, assign(url), show(view), framed }. Resolves to the last view
 // shown. D.framed (sbaConsentFramed(window) in the browser) stops the page before it asks the server anything (R1-11).
 // A view is { kind, ... }; sbaConsentHtml(view) draws it and sbaConsentBind wires its buttons. A view that offers a
-// decision carries uid, the id of the person it was drawn for (R4).
+// decision carries uid, the id of the person it was drawn for (R4). R5 (N3): g is the sign-in generation when this run
+// began; if the listener moved it while the run loaded, the run shows changed instead of what it loaded.
 async function sbaConsentRun(D) {
-  var show = function (v) { return sbaConsentShow(D, v); };
+  var g = D.gen || 0;
+  D.base = '';
+  var show = function (v) { return sbaConsentShow(D, (D.gen || 0) !== g ? SBA_CONSENT_CHANGED : v); };
   if (D.framed) return show({ kind: 'framed' });
   var id = sbaConsentId(D.search);
   if (!id) return show({ kind: 'no-id' });
   sbaConsentWatch(D);
   var me = await sbaConsentUser(D);
   if (!me) return show({ kind: 'signin', id: id });
+  D.base = me.id;
   var det = null;
   try { det = await D.sb.auth.oauth.getAuthorizationDetails(id); } catch (e) { det = { data: null, error: e }; }
   if (!det || det.error || !det.data) return show({ kind: 'refused', email: me.email, why: 'This authorisation request could not be read: ' + sbaConsentErr(det && det.error) + '. Start the connection again from Claude.' });
@@ -211,6 +221,7 @@ async function sbaConsentRun(D) {
     // R1-11: the same http(s) rule Approve and Deny apply (sbaConsentDecide); anything else goes nowhere
     if (!/^https?:\/\//i.test(d.redirect_url)) return show({ kind: 'error', why: 'The earlier approval came back without a usable address. Start the connection again from Claude.' });
     if (!(await sbaConsentSame(D, who.id))) return show(SBA_CONSENT_CHANGED);   // R4
+    if ((D.gen || 0) !== g) return show(SBA_CONSENT_CHANGED);   // R5 (N3, N5): someone else signed in while it loaded
     D.assign(d.redirect_url); return show({ kind: 'leaving', email: email });
   }
   var row = mem.data;
@@ -221,8 +232,13 @@ function sbaConsentErr(e) { return e && e.message ? String(e.message) : 'no answ
 
 // the decisions: Approve and Deny call the SDK with skipBrowserRedirect and follow the URL IT returns. v is the view the
 // button was on. R4: the session is read again first; anyone but the person v was drawn for (or no one) signed in now
-// stops it, and nothing is sent.
+// stops it, and nothing is sent. R5 (N2): one decision at a time; a second while the first is being sent sends nothing.
 async function sbaConsentDecide(D, v, approve) {
+  if (D.deciding) return null;   // N2: the first decision is still on its way
+  D.deciding = true;
+  try { return await sbaConsentSend(D, v, approve); } finally { D.deciding = false; }
+}
+async function sbaConsentSend(D, v, approve) {
   var id = v && v.id;
   if (!v || !(await sbaConsentSame(D, v.uid))) { sbaConsentShow(D, SBA_CONSENT_CHANGED); return null; }
   var r = null;
@@ -276,24 +292,35 @@ function sbaConsentHtml(v) {
   return h + '<p class="muted">Loading\u2026</p>';
 }
 
-// sbaConsentBind(root, D, v): wires the buttons a view drew (in the browser only)
+// sbaConsentBind(root, D, v): wires the buttons a view drew (in the browser only). R5-1: each handler holds its OWN
+// element, looked up once here; none reads a variable that a later lookup reassigns.
 function sbaConsentBind(root, D, v) {
   var q = function (sel) { return root.querySelector(sel); };
   var msg = function (t) { var m = q('#cMsg'); if (m) m.textContent = t; };
-  var b;
-  if ((b = q('#cSignOut'))) b.onclick = async function () { b.disabled = true; try { await D.sb.auth.signOut(); } catch (e) { /* the next run decides */ } sbaConsentRun(D); };
-  if ((b = q('#cApprove'))) b.onclick = async function () { this.disabled = true; msg('Approving\u2026'); await sbaConsentDecide(D, v, true); };
-  if ((b = q('#cDeny'))) b.onclick = async function () { this.disabled = true; msg('Denying\u2026'); await sbaConsentDecide(D, v, false); };
-  if ((b = q('#cMagic'))) {
-    var inp = q('#cEmail');
-    var go = async function () { b.disabled = true; msg('Sending\u2026');
+  var out = q('#cSignOut'), ok = q('#cApprove'), no = q('#cDeny'), magic = q('#cMagic'), google = q('#cGoogle'), inp = q('#cEmail');
+  // "not you?": sign out, then run again (no session now: the sign-in view); the one listener stays as it is
+  if (out) out.onclick = async function () { out.disabled = true; try { await D.sb.auth.signOut(); } catch (e) { /* the next run decides */ } await sbaConsentRun(D); };
+  // N2: Approve and Deny are one decision; both go off before it is sent
+  var decide = function (approve) {
+    if (D.deciding) return null;
+    if (ok) ok.disabled = true;
+    if (no) no.disabled = true;
+    msg(approve ? 'Approving\u2026' : 'Denying\u2026');
+    return sbaConsentDecide(D, v, approve);
+  };
+  if (ok) ok.onclick = function () { return decide(true); };
+  if (no) no.onclick = function () { return decide(false); };
+  if (magic) {
+    var send = async function () {
+      if (magic.disabled) return;   // N1: Enter while a send is on its way sends nothing more
+      magic.disabled = true; msg('Sending\u2026');
       var r = await sbaConsentMagic(D, inp && inp.value);
-      msg(r.error ? 'Error: ' + r.error.message : 'Check your email for the sign-in link. It brings you back to this page.'); b.disabled = false; };
-    b.onclick = go; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') go(); };
+      msg(r.error ? 'Error: ' + r.error.message : 'Check your email for the sign-in link. It brings you back to this page.'); magic.disabled = false; };
+    magic.onclick = send; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') send(); };
   }
-  if ((b = q('#cGoogle'))) b.onclick = async function () { b.disabled = true; msg('Opening Google sign-in\u2026');
+  if (google) google.onclick = async function () { google.disabled = true; msg('Opening Google sign-in\u2026');
     var r = await sbaConsentGoogle(D);
-    if (r.error) { msg(/not enabled|unsupported provider|validation_failed/i.test(r.error.message) ? "Google sign-in isn't switched on yet \u2014 use your work email below." : 'Error: ' + r.error.message); b.disabled = false; } };
+    if (r.error) { msg(/not enabled|unsupported provider|validation_failed/i.test(r.error.message) ? "Google sign-in isn't switched on yet \u2014 use your work email below." : 'Error: ' + r.error.message); google.disabled = false; } };
 }
 
 // the boot, in the browser only (the prelude defines SBA_ENV and loadSDK)
