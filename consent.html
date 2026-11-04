@@ -116,12 +116,22 @@ function loadSDK(){ return new Promise((res,rej)=>{ if(window.supabase)return re
 // Review round 4 (Codex r1, P2): the person shown is the one the authorisation is BOUND to (the details' user, whose
 // token the SDK sent when it asked), never an earlier getSession() read; the session is read again immediately before
 // Approve or Deny (and before an earlier consent's redirect is followed) and must still be that person; and a sign-in
-// change while the page is open (another tab signing someone else in, or out) withdraws the decision. A shared browser
-// switched from one person to another mid-page can no longer show one and approve for the other.
+// change while the page is open (another tab signing someone else in, or out) withdraws the decision. As far as the
+// browser can check, the page never sends a decision for anyone but the person shown (N8, N16). The server is the last
+// check: auth-js reads the session again for the consent POST itself (N6, to be confirmed at the staging E2E).
 // Review round 5 (R5-1, P2): each button's handler holds its own element ("not you?" read a shared variable at click time,
 // null by then, so it threw and signed no one out; the magic link disabled Google's button, N1). One decision at a time:
 // Approve and Deny both go off while one is sent, and sbaConsentDecide sends no second (N2). A sign-in change while the
 // page is still loading (before any view carries uid) makes that load stale, shown as changed (N3; N5 with it).
+// Review round 6 (R6-1, P2): the address a sign-in comes back to is the page's own (origin, path and the authorisation
+// id), built at boot before the SDK loads and again by each sign-in method; never location.href, which after a sign-in
+// return still carries the implicit flow's #access_token=...&refresh_token=... (or an expired link's #error=...), so
+// "not you?" and a new sign-in sent the old session's tokens as redirect_to. Once auth-js has read a return from the
+// address (while it initialises), the address bar is set to that clean address. N12: a decision follows its redirect,
+// or shows its error, only while the view it was sent from is still on screen, and "not you?" turns the decision buttons
+// off first. N14: a
+// sign-in method that throws gives its button back with the error; a redirect the browser refuses says so. N13: a
+// sign-out that fails and keeps the session says so.
 //
 // NOT a module: build-deploy.mjs (lib/consent-page.mjs) inlines this file VERBATIM into consent.html after the prelude
 // (SBA_ENV and the pinned SDK loader, src/shell/sdk-loader.js). It creates no element and no script (the SRI pins on
@@ -138,6 +148,16 @@ function sbaConsentId(search) {
   var m = /[?&]authorization_id=([^&#]*)/.exec(String(search || ''));
   var id = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')).trim() : '';
   return /^[A-Za-z0-9._-]{1,128}$/.test(id) ? id : '';
+}
+
+// R6-1: the page's own address, the one a sign-in comes back to: everything before the query (the origin and the path)
+// and the authorisation id as the only parameter. Never the fragment (a sign-in return's tokens, an expired link's
+// error), and nothing else from the query.
+function sbaConsentBack(href) {
+  var s = String(href || '').split('#')[0];
+  var q = s.indexOf('?');
+  var id = sbaConsentId(q < 0 ? '' : s.slice(q));
+  return (q < 0 ? s : s.slice(0, q)) + (id ? '?authorization_id=' + encodeURIComponent(id) : '');
 }
 
 // the views a member row holds, as the app reads them (an array of keys; anything else is none)
@@ -222,13 +242,19 @@ async function sbaConsentRun(D) {
     if (!/^https?:\/\//i.test(d.redirect_url)) return show({ kind: 'error', why: 'The earlier approval came back without a usable address. Start the connection again from Claude.' });
     if (!(await sbaConsentSame(D, who.id))) return show(SBA_CONSENT_CHANGED);   // R4
     if ((D.gen || 0) !== g) return show(SBA_CONSENT_CHANGED);   // R5 (N3, N5): someone else signed in while it loaded
-    D.assign(d.redirect_url); return show({ kind: 'leaving', email: email });
+    if (!sbaConsentGo(D, d.redirect_url)) return D.cur;   // N14
+    return show({ kind: 'leaving', email: email });
   }
   var row = mem.data;
   return show({ kind: 'ask', id: id, uid: who.id, email: email, client: client, role: String(row.role || ''), scope: String(row.scope || ''), views: sbaConsentViews(row) });
 }
 
 function sbaConsentErr(e) { return e && e.message ? String(e.message) : 'no answer'; }
+
+// N14: follow a redirect; a browser that refuses it (location.assign throws) shows why, instead of dead buttons
+function sbaConsentGo(D, to) {
+  try { D.assign(to); return true; } catch (e) { sbaConsentShow(D, { kind: 'error', why: 'This page could not return you to Claude: ' + sbaConsentErr(e) + '. Start the connection again from Claude.' }); return false; }
+}
 
 // the decisions: Approve and Deny call the SDK with skipBrowserRedirect and follow the URL IT returns. v is the view the
 // button was on. R4: the session is read again first; anyone but the person v was drawn for (or no one) signed in now
@@ -243,23 +269,26 @@ async function sbaConsentSend(D, v, approve) {
   if (!v || !(await sbaConsentSame(D, v.uid))) { sbaConsentShow(D, SBA_CONSENT_CHANGED); return null; }
   var r = null;
   var fn = approve ? 'approveAuthorization' : 'denyAuthorization';
+  var at = D.cur;   // N12: the view on screen as the decision is sent
   try { r = await D.sb.auth.oauth[fn](id, { skipBrowserRedirect: true }); } catch (e) { r = { data: null, error: e }; }
+  if (D.cur !== at) return null;   // N12: the page has moved on while it was sent ("not you?", another account); leave it there
   var to = r && !r.error && r.data && typeof r.data.redirect_url === 'string' ? r.data.redirect_url : '';
   if (!/^https?:\/\//i.test(to)) { sbaConsentShow(D, { kind: 'error', why: (approve ? 'Approve' : 'Deny') + ' did not complete: ' + sbaConsentErr(r && r.error) + '. Start the connection again from Claude.' }); return null; }
-  D.assign(to);
+  if (!sbaConsentGo(D, to)) return null;   // N14
   sbaConsentShow(D, { kind: 'leaving' });
   return to;
 }
 
-// the sign-in: the shell's two methods, each back to THIS page with its query (the authorisation id rides along)
+// the sign-in: the shell's two methods, each back to THIS page with the authorisation id (R6-1: sbaConsentBack, never a
+// fragment or another parameter)
 async function sbaConsentMagic(D, email) {
   var e = String(email || '').trim();
   if (!e) return { error: { message: 'enter your work email' } };
-  var r = await D.sb.auth.signInWithOtp({ email: e, options: { emailRedirectTo: D.href, shouldCreateUser: false } });
+  var r = await D.sb.auth.signInWithOtp({ email: e, options: { emailRedirectTo: sbaConsentBack(D.href), shouldCreateUser: false } });
   return r || {};
 }
 async function sbaConsentGoogle(D) {
-  var r = await D.sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: D.href } });
+  var r = await D.sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: sbaConsentBack(D.href) } });
   return r || {};
 }
 
@@ -298,8 +327,12 @@ function sbaConsentBind(root, D, v) {
   var q = function (sel) { return root.querySelector(sel); };
   var msg = function (t) { var m = q('#cMsg'); if (m) m.textContent = t; };
   var out = q('#cSignOut'), ok = q('#cApprove'), no = q('#cDeny'), magic = q('#cMagic'), google = q('#cGoogle'), inp = q('#cEmail');
-  // "not you?": sign out, then run again (no session now: the sign-in view); the one listener stays as it is
-  if (out) out.onclick = async function () { out.disabled = true; try { await D.sb.auth.signOut(); } catch (e) { /* the next run decides */ } await sbaConsentRun(D); };
+  // "not you?": sign out, then run again (no session now: the sign-in view); the one listener stays as it is. N12: the
+  // decision buttons go off first, so no decision is started while the sign-out is on its way
+  // N13: a sign-out that answers an error (and so keeps the session) is said on the view the re-run draws, below
+  if (out) out.onclick = async function () { out.disabled = true; if (ok) ok.disabled = true; if (no) no.disabled = true;
+    try { var so = await D.sb.auth.signOut(); D.outErr = so && so.error; } catch (e) { D.outErr = e; } await sbaConsentRun(D); };
+  if (D.outErr) { var oe = D.outErr; D.outErr = null; if (v.kind !== 'signin') msg('Signing out did not work: ' + sbaConsentErr(oe) + '. Try again, or close this page.'); }
   // N2: Approve and Deny are one decision; both go off before it is sent
   var decide = function (approve) {
     if (D.deciding) return null;
@@ -314,24 +347,38 @@ function sbaConsentBind(root, D, v) {
     var send = async function () {
       if (magic.disabled) return;   // N1: Enter while a send is on its way sends nothing more
       magic.disabled = true; msg('Sending\u2026');
-      var r = await sbaConsentMagic(D, inp && inp.value);
+      var r;
+      try { r = await sbaConsentMagic(D, inp && inp.value); } catch (e) { r = { error: { message: sbaConsentErr(e) } }; }   // N14
       msg(r.error ? 'Error: ' + r.error.message : 'Check your email for the sign-in link. It brings you back to this page.'); magic.disabled = false; };
     magic.onclick = send; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') send(); };
   }
   if (google) google.onclick = async function () { google.disabled = true; msg('Opening Google sign-in\u2026');
-    var r = await sbaConsentGoogle(D);
+    var r;
+    try { r = await sbaConsentGoogle(D); } catch (e) { r = { error: { message: sbaConsentErr(e) } }; }   // N14
     if (r.error) { msg(/not enabled|unsupported provider|validation_failed/i.test(r.error.message) ? "Google sign-in isn't switched on yet \u2014 use your work email below." : 'Error: ' + r.error.message); google.disabled = false; } };
 }
 
 // the boot, in the browser only (the prelude defines SBA_ENV and loadSDK)
 async function sbaConsentBoot() {
   var root = document.getElementById('consent');
-  var D = { sb: null, href: location.href, search: location.search, framed: sbaConsentFramed(window), assign: function (u) { location.assign(u); },
+  // R6-1: the address back to this page is built here, before the SDK loads, and is never location.href itself
+  var D = { sb: null, href: sbaConsentBack(location.href), search: location.search, framed: sbaConsentFramed(window), assign: function (u) { location.assign(u); },
     show: function (v) { root.innerHTML = sbaConsentHtml(v); sbaConsentBind(root, D, v); } };
   if (D.framed) { D.show({ kind: 'framed' }); return; }   // R1-11: before the SDK loads or anything is asked
   try { await loadSDK(); } catch (e) { D.show({ kind: 'error', why: "Couldn't load the sign-in library. Check your connection and reload." }); return; }   // eslint-disable-line no-undef
   D.sb = window.supabase.createClient(SBA_ENV.sb_url, SBA_ENV.sb_key);   // eslint-disable-line no-undef
+  await sbaConsentTidy(D);
   await sbaConsentRun(D);
+}
+// R6-1: auth-js reads a sign-in return from the address while it initialises (and clears the fragment itself only when the
+// sign-in worked), so the address bar is set to the page's own address only after that, never before: earlier, auth-js
+// would not see the tokens. No token or error is then left in the address bar or its history entry.
+async function sbaConsentTidy(D) {
+  try {
+    if (typeof D.sb.auth.initialize !== 'function') return;
+    await D.sb.auth.initialize();
+    if (location.href !== D.href) history.replaceState(history.state, '', D.href);   // eslint-disable-line no-undef
+  } catch (e) { /* the address bar keeps what it had */ }
 }
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof SBA_ENV !== 'undefined') sbaConsentBoot();   // eslint-disable-line no-undef
 </script>
