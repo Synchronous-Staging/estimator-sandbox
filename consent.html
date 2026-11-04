@@ -113,6 +113,11 @@ function loadSDK(){ return new Promise((res,rej)=>{ if(window.supabase)return re
 // own row by e-mail; none: "you are not on the access list for this tool" and Deny only); (5) shows who Claude would act
 // as, with Approve and Deny, each following the redirect URL the SDK RETURNS, never one from the query.
 // D134 (3 Nov 2026): any platform member may connect; there is no connector key check on this page.
+// Review round 4 (Codex r1, P2): the person shown is the one the authorisation is BOUND to (the details' user, whose
+// token the SDK sent when it asked), never an earlier getSession() read; the session is read again immediately before
+// Approve or Deny (and before an earlier consent's redirect is followed) and must still be that person; and a sign-in
+// change while the page is open (another tab signing someone else in, or out) withdraws the decision. A shared browser
+// switched from one person to another mid-page can no longer show one and approve for the other.
 //
 // NOT a module: build-deploy.mjs (lib/consent-page.mjs) inlines this file VERBATIM into consent.html after the prelude
 // (SBA_ENV and the pinned SDK loader, src/shell/sdk-loader.js). It creates no element and no script (the SRI pins on
@@ -134,45 +139,99 @@ function sbaConsentId(search) {
 // the views a member row holds, as the app reads them (an array of keys; anything else is none)
 function sbaConsentViews(row) { return row && Array.isArray(row.views) ? row.views.filter(function (v) { return typeof v === 'string'; }) : []; }
 
-// sbaConsentRun(D): the page's flow. D = { sb, href, search, assign(url), show(view) }. Resolves to the last view shown.
-// A view is { kind, ... }; sbaConsentHtml(view) draws it and sbaConsentBind wires its buttons to D.act(name).
+// review round 1, R1-11: true when this page is not the top window (a frame), or when the top cannot even be read (a
+// cross-origin parent). GitHub Pages cannot send frame-ancestors, so the page refuses itself inside a frame: a hostile
+// page could otherwise frame it for a signed-in member and lay its own overlay over Approve.
+function sbaConsentFramed(w) {
+  try { return w.top !== w.self; } catch (e) { return true; }
+}
+
+// a user as the page holds one: { id, email (lower-cased) }, or null when either is missing
+function sbaConsentWho(u) {
+  return u && typeof u.id === 'string' && u.id && typeof u.email === 'string' && u.email ? { id: u.id, email: u.email.toLowerCase() } : null;
+}
+// who is signed in to this browser NOW (the SDK reads its storage on every call, so another tab's sign-in shows here)
+async function sbaConsentUser(D) {
+  var s = null;
+  try { s = await D.sb.auth.getSession(); } catch (e) { return null; }
+  return sbaConsentWho(s && s.data && s.data.session && s.data.session.user);
+}
+// R4: true only when the person signed in now is the one the view was drawn for
+async function sbaConsentSame(D, uid) {
+  var u = await sbaConsentUser(D);
+  return !!(u && uid && u.id === uid);
+}
+var SBA_CONSENT_CHANGED = { kind: 'changed' };
+// every view goes through here, so D.cur is the view on screen (the sign-in listener reads it)
+function sbaConsentShow(D, v) { D.cur = v; D.show(v); return v; }
+// R4: one listener for the page's life; a view bound to a person (v.uid) is withdrawn when the signed-in person changes
+function sbaConsentWatch(D) {
+  if (D.watching || !D.sb.auth.onAuthStateChange) return;
+  D.watching = true;
+  D.sb.auth.onAuthStateChange(function (event, session) { sbaConsentOnAuth(D, session); });
+}
+function sbaConsentOnAuth(D, session) {
+  var v = D.cur;
+  if (!v || !v.uid) return;
+  var u = sbaConsentWho(session && session.user);
+  if (u && u.id === v.uid) return;
+  sbaConsentShow(D, SBA_CONSENT_CHANGED);
+}
+
+// sbaConsentRun(D): the page's flow. D = { sb, href, search, assign(url), show(view), framed }. Resolves to the last view
+// shown. D.framed (sbaConsentFramed(window) in the browser) stops the page before it asks the server anything (R1-11).
+// A view is { kind, ... }; sbaConsentHtml(view) draws it and sbaConsentBind wires its buttons. A view that offers a
+// decision carries uid, the id of the person it was drawn for (R4).
 async function sbaConsentRun(D) {
-  var show = function (v) { D.show(v); return v; };
+  var show = function (v) { return sbaConsentShow(D, v); };
+  if (D.framed) return show({ kind: 'framed' });
   var id = sbaConsentId(D.search);
   if (!id) return show({ kind: 'no-id' });
-  var s = null;
-  try { s = await D.sb.auth.getSession(); } catch (e) { s = { data: null, error: e }; }
-  var session = s && s.data && s.data.session;
-  if (!session || !session.user || !session.user.email) return show({ kind: 'signin', id: id });
-  var email = String(session.user.email).toLowerCase();
+  sbaConsentWatch(D);
+  var me = await sbaConsentUser(D);
+  if (!me) return show({ kind: 'signin', id: id });
   var det = null;
   try { det = await D.sb.auth.oauth.getAuthorizationDetails(id); } catch (e) { det = { data: null, error: e }; }
-  if (!det || det.error || !det.data) return show({ kind: 'refused', email: email, why: 'This authorisation request could not be read: ' + sbaConsentErr(det && det.error) + '. Start the connection again from Claude.' });
+  if (!det || det.error || !det.data) return show({ kind: 'refused', email: me.email, why: 'This authorisation request could not be read: ' + sbaConsentErr(det && det.error) + '. Start the connection again from Claude.' });
   var d = det.data;
   // an earlier consent: the server answers with the redirect at once (the client was checked when it was given)
   var already = typeof d.authorization_id !== 'string' && typeof d.redirect_url === 'string';
   var client = d.client && typeof d.client.name === 'string' ? d.client.name : '';
-  if (!already && SBA_CONSENT_CLIENTS.indexOf(client) < 0) return show({ kind: 'refused', email: email, why: 'This request comes from an app that is not the SBA Platform connector (' + (client || 'no name') + '). Nothing has been shared.' });
+  if (!already && SBA_CONSENT_CLIENTS.indexOf(client) < 0) return show({ kind: 'refused', email: me.email, why: 'This request comes from an app that is not the SBA Platform connector (' + (client || 'no name') + '). Nothing has been shared.' });
+  // R4: the person shown is the one the authorisation is bound to; an earlier consent names no one, so it keeps the
+  // session read above and is re-checked before its redirect is followed
+  var who = already ? me : sbaConsentWho(d.user);
+  if (!who) return show({ kind: 'refused', email: me.email, why: 'This authorisation request does not say who it is for. Nothing has been shared. Start the connection again from Claude.' });
+  var email = who.email;
   var mem = null;
   try { mem = await D.sb.from('members').select('role,scope,views').eq('email', email).maybeSingle(); } catch (e) { mem = { data: null, error: e }; }
-  if (!mem || mem.error) return show({ kind: 'deny-only', id: id, email: email, why: 'Your access could not be read: ' + sbaConsentErr(mem && mem.error) + '. Try again, or deny.' });
-  if (!mem.data) return show({ kind: 'deny-only', id: id, email: email, why: 'you are not on the access list for this tool' });
-  if (already) { D.assign(d.redirect_url); return show({ kind: 'leaving', email: email }); }
+  if (!mem || mem.error) return show({ kind: 'deny-only', id: id, uid: who.id, email: email, why: 'Your access could not be read: ' + sbaConsentErr(mem && mem.error) + '. Try again, or deny.' });
+  if (!mem.data) return show({ kind: 'deny-only', id: id, uid: who.id, email: email, why: 'you are not on the access list for this tool' });
+  if (already) {
+    // R1-11: the same http(s) rule Approve and Deny apply (sbaConsentDecide); anything else goes nowhere
+    if (!/^https?:\/\//i.test(d.redirect_url)) return show({ kind: 'error', why: 'The earlier approval came back without a usable address. Start the connection again from Claude.' });
+    if (!(await sbaConsentSame(D, who.id))) return show(SBA_CONSENT_CHANGED);   // R4
+    D.assign(d.redirect_url); return show({ kind: 'leaving', email: email });
+  }
   var row = mem.data;
-  return show({ kind: 'ask', id: id, email: email, client: client, role: String(row.role || ''), scope: String(row.scope || ''), views: sbaConsentViews(row) });
+  return show({ kind: 'ask', id: id, uid: who.id, email: email, client: client, role: String(row.role || ''), scope: String(row.scope || ''), views: sbaConsentViews(row) });
 }
 
 function sbaConsentErr(e) { return e && e.message ? String(e.message) : 'no answer'; }
 
-// the decisions: Approve and Deny call the SDK with skipBrowserRedirect and follow the URL IT returns
-async function sbaConsentDecide(D, id, approve) {
+// the decisions: Approve and Deny call the SDK with skipBrowserRedirect and follow the URL IT returns. v is the view the
+// button was on. R4: the session is read again first; anyone but the person v was drawn for (or no one) signed in now
+// stops it, and nothing is sent.
+async function sbaConsentDecide(D, v, approve) {
+  var id = v && v.id;
+  if (!v || !(await sbaConsentSame(D, v.uid))) { sbaConsentShow(D, SBA_CONSENT_CHANGED); return null; }
   var r = null;
   var fn = approve ? 'approveAuthorization' : 'denyAuthorization';
   try { r = await D.sb.auth.oauth[fn](id, { skipBrowserRedirect: true }); } catch (e) { r = { data: null, error: e }; }
   var to = r && !r.error && r.data && typeof r.data.redirect_url === 'string' ? r.data.redirect_url : '';
-  if (!/^https?:\/\//i.test(to)) { D.show({ kind: 'error', why: (approve ? 'Approve' : 'Deny') + ' did not complete: ' + sbaConsentErr(r && r.error) + '. Start the connection again from Claude.' }); return null; }
+  if (!/^https?:\/\//i.test(to)) { sbaConsentShow(D, { kind: 'error', why: (approve ? 'Approve' : 'Deny') + ' did not complete: ' + sbaConsentErr(r && r.error) + '. Start the connection again from Claude.' }); return null; }
   D.assign(to);
-  D.show({ kind: 'leaving' });
+  sbaConsentShow(D, { kind: 'leaving' });
   return to;
 }
 
@@ -194,6 +253,7 @@ var SBA_CONSENT_LOGO = '<svg class="logo" viewBox="0 0 100 116" role="img" aria-
 function sbaConsentHtml(v) {
   var h = SBA_CONSENT_LOGO + '<h1>Connect Claude to the SBA Platform</h1>';
   var who = v.email ? '<p class="muted">Signed in as <b>' + sbaConsentEsc(v.email) + '</b> <button type="button" class="link" id="cSignOut">not you?</button></p>' : '';
+  if (v.kind === 'framed') return h + '<p class="msg" role="alert">This page cannot be used inside a frame. Open the connection from Claude in its own window.</p>';
   if (v.kind === 'no-id') return h + '<p class="msg" role="alert">This page needs an authorisation request from Claude, and none came with it. Start the connection again from Claude.</p>';
   if (v.kind === 'signin') return h + '<p>Sign in with your platform login to continue.</p>'
     + '<button type="button" id="cGoogle" class="btn">Continue with Google</button>'
@@ -210,6 +270,7 @@ function sbaConsentHtml(v) {
       + '<p class="muted">Claude can then do what you can do in the app and nothing more. You can disconnect it at any time from Connected apps in the app.</p>'
       + '<div class="row"><button type="button" id="cDeny" class="btn">Deny</button><button type="button" id="cApprove" class="btn primary">Approve</button></div><p class="msg" id="cMsg" role="status"></p>';
   }
+  if (v.kind === 'changed') return h + '<p class="msg" role="alert">The account signed in to this browser changed while this page was open. Nothing was approved or denied. Reload this page to continue as the account signed in now.</p>';
   if (v.kind === 'leaving') return h + '<p class="muted">Returning you to Claude\u2026</p>';
   if (v.kind === 'error') return h + '<p class="msg" role="alert">' + sbaConsentEsc(v.why) + '</p>';
   return h + '<p class="muted">Loading\u2026</p>';
@@ -221,8 +282,8 @@ function sbaConsentBind(root, D, v) {
   var msg = function (t) { var m = q('#cMsg'); if (m) m.textContent = t; };
   var b;
   if ((b = q('#cSignOut'))) b.onclick = async function () { b.disabled = true; try { await D.sb.auth.signOut(); } catch (e) { /* the next run decides */ } sbaConsentRun(D); };
-  if ((b = q('#cApprove'))) b.onclick = async function () { this.disabled = true; msg('Approving\u2026'); await sbaConsentDecide(D, v.id, true); };
-  if ((b = q('#cDeny'))) b.onclick = async function () { this.disabled = true; msg('Denying\u2026'); await sbaConsentDecide(D, v.id, false); };
+  if ((b = q('#cApprove'))) b.onclick = async function () { this.disabled = true; msg('Approving\u2026'); await sbaConsentDecide(D, v, true); };
+  if ((b = q('#cDeny'))) b.onclick = async function () { this.disabled = true; msg('Denying\u2026'); await sbaConsentDecide(D, v, false); };
   if ((b = q('#cMagic'))) {
     var inp = q('#cEmail');
     var go = async function () { b.disabled = true; msg('Sending\u2026');
@@ -238,8 +299,9 @@ function sbaConsentBind(root, D, v) {
 // the boot, in the browser only (the prelude defines SBA_ENV and loadSDK)
 async function sbaConsentBoot() {
   var root = document.getElementById('consent');
-  var D = { sb: null, href: location.href, search: location.search, assign: function (u) { location.assign(u); },
+  var D = { sb: null, href: location.href, search: location.search, framed: sbaConsentFramed(window), assign: function (u) { location.assign(u); },
     show: function (v) { root.innerHTML = sbaConsentHtml(v); sbaConsentBind(root, D, v); } };
+  if (D.framed) { D.show({ kind: 'framed' }); return; }   // R1-11: before the SDK loads or anything is asked
   try { await loadSDK(); } catch (e) { D.show({ kind: 'error', why: "Couldn't load the sign-in library. Check your connection and reload." }); return; }   // eslint-disable-line no-undef
   D.sb = window.supabase.createClient(SBA_ENV.sb_url, SBA_ENV.sb_key);   // eslint-disable-line no-undef
   await sbaConsentRun(D);
