@@ -1,8 +1,8 @@
 {
- "version": "v3.41b",
+ "version": "v3.42.1",
  "env": "sandbox",
- "built_at": "2026-11-04T12:22:11.519Z",
- "closure_sha256": "212b4152337d056bd297aea331042c8f201fc9e0516296137d88785d91c0005e",
+ "built_at": "2026-11-07T07:07:26.075Z",
+ "closure_sha256": "6308df5dbf24b93ce4ceb70485c62ee89afe494651deb6e2af2ebb6d12d85e6f",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -15,8 +15,8 @@
    "sha256": "699a0a21274e960a8788a11bc44979c4b404a85bbeffedc4f9c8e02dbbaa0938"
   },
   "index.html": {
-   "bytes": 248152,
-   "sha256": "185b918c41e48d26c7b3c3b537c1fdbc3b8c675b980acd16baf473be74f9926d"
+   "bytes": 255219,
+   "sha256": "87a4d5198e1c03c741c7be313753ee3c242123eebd8755f798ed65bdc879d7e0"
   },
   "modules/estimator-06e69a0d.css": {
    "bytes": 22951,
@@ -34,9 +34,9 @@
    "bytes": 1866,
    "sha256": "771fed281eeb499b287144a060218555ecc0f4d7c4282eadc233e17dc6f7d11d"
   },
-  "modules/tracker-BqTkbPSQ.js": {
-   "bytes": 416970,
-   "sha256": "e21db00e3a4fa6414ace18c7b5ca36231d5ba3a2b01827323d9c9297ee750ca7"
+  "modules/tracker-CDfOdhk3.js": {
+   "bytes": 431972,
+   "sha256": "e5cd02afdff654d11f17f4d9dc42f82199cace051880574949755ac885bb566b"
   },
   "modules/tracker-CH9HUR0r.css": {
    "bytes": 21475,
@@ -66,13 +66,13 @@
    "bytes": 10006,
    "sha256": "5292838e685d7e60345581cfc424de016609073695b259d2bcd817036b819ae3"
   },
-  "modules/tracker-invoicing-BXKU_4dI.js": {
-   "bytes": 23528,
-   "sha256": "c7b3042c4132d6a94632ab54df83750a37bca8bcdd52e68eac13b24dd1ab1f2c"
+  "modules/tracker-invoicing-BkWMfQw9.css": {
+   "bytes": 9662,
+   "sha256": "e1bca5ee6750e618b4d0b2f183546bdaf97239407675a73e00d27d9bf9bf503e"
   },
-  "modules/tracker-invoicing-BeQbcLxV.css": {
-   "bytes": 9598,
-   "sha256": "1a986585b8fdf78e1e24d0a86a3bb52b9683e0e3be9eb2e1319df335e829d96e"
+  "modules/tracker-invoicing-DfoInxFd.js": {
+   "bytes": 25360,
+   "sha256": "65ef1f0e53a24156c8f82f132313edbb48cf92ca9232260581da41c14a437f77"
   },
   "modules/tracker-monthly-BpI4N7xv.css": {
    "bytes": 1535,
@@ -95,7 +95,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-04T12:22:10.679Z",
+    "built_at": "2026-11-07T07:07:24.910Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
@@ -120,7 +120,7 @@
    "capability": null,
    "css": "modules/tracker-CH9HUR0r.css",
    "id": "tracker",
-   "js": "modules/tracker-BqTkbPSQ.js",
+   "js": "modules/tracker-CDfOdhk3.js",
    "title": "Budget Tracker"
   },
   "tracker-budget": {
@@ -165,9 +165,9 @@
     "js": 27500
    },
    "capability": "invoicing",
-   "css": "modules/tracker-invoicing-BeQbcLxV.css",
+   "css": "modules/tracker-invoicing-BkWMfQw9.css",
    "id": "tracker-invoicing",
-   "js": "modules/tracker-invoicing-BXKU_4dI.js",
+   "js": "modules/tracker-invoicing-DfoInxFd.js",
    "kind": "view",
    "title": "Invoicing"
   },
