@@ -1,8 +1,8 @@
 {
  "version": "v3.42.1",
  "env": "sandbox",
- "built_at": "2026-11-07T07:07:26.075Z",
- "closure_sha256": "6308df5dbf24b93ce4ceb70485c62ee89afe494651deb6e2af2ebb6d12d85e6f",
+ "built_at": "2026-11-07T07:18:18.161Z",
+ "closure_sha256": "20e06f444d4515e19232cf60f311a6b130fec365d64c66b42ec1b8c7d33fc1a2",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -15,8 +15,16 @@
    "sha256": "699a0a21274e960a8788a11bc44979c4b404a85bbeffedc4f9c8e02dbbaa0938"
   },
   "index.html": {
-   "bytes": 255219,
-   "sha256": "87a4d5198e1c03c741c7be313753ee3c242123eebd8755f798ed65bdc879d7e0"
+   "bytes": 255423,
+   "sha256": "be9a75bc62b06677488d6cf32599a260eb84822bb5e8b3c37024e957e9e54c78"
+  },
+  "modules/crm-BL_9wnh1.css": {
+   "bytes": 27296,
+   "sha256": "9244dd2e7ef92f5669d1d8016bb15ed7a76902040a0251ff0dc572995e6e494d"
+  },
+  "modules/crm-CXkQKOF2.js": {
+   "bytes": 124410,
+   "sha256": "55b48d8a046d7bfe94ff8a52481368020f64e06da0b5b7ef61a5bcd7f6577303"
   },
   "modules/estimator-06e69a0d.css": {
    "bytes": 22951,
@@ -84,6 +92,17 @@
   }
  },
  "modules": {
+  "crm": {
+   "budget": {
+    "css": 40000,
+    "js": 1000000
+   },
+   "capability": "crm",
+   "css": "modules/crm-BL_9wnh1.css",
+   "id": "crm",
+   "js": "modules/crm-CXkQKOF2.js",
+   "title": "CRM"
+  },
   "estimator": {
    "budget": {
     "css": 120000,
@@ -95,7 +114,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-07T07:07:24.910Z",
+    "built_at": "2026-11-07T07:18:17.277Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
