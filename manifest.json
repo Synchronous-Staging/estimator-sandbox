@@ -1,8 +1,8 @@
 {
  "version": "v3.42.1",
  "env": "sandbox",
- "built_at": "2026-11-07T07:26:32.406Z",
- "closure_sha256": "eaf910ab536100d6a9ac444c170867e7a1d95826ad5c90a5f1645ec4dc82cdf0",
+ "built_at": "2026-11-07T07:28:03.424Z",
+ "closure_sha256": "23870a792ebf256fc6f496db4b0305f164d2802373cfd780bce930fd4e0fe9e5",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,15 +16,15 @@
   },
   "index.html": {
    "bytes": 255423,
-   "sha256": "15b8dc09829c3556d3a9227b7c90600c4a74195efeec877160f5610c02ef5d13"
+   "sha256": "1f6edfa4c11400d7ceba57148de417bc35be9087ef4a33dc04270e27f72f3e53"
   },
-  "modules/crm-CeTq5xsb.js": {
-   "bytes": 141437,
-   "sha256": "b10989a74a3a43f2005a4dbb53f2071ad443f0df8cde84ff04e2b5389e86f49c"
+  "modules/crm-DbcLlRRf.css": {
+   "bytes": 40596,
+   "sha256": "eef9f5f5b10c93edfd669a020f32b7d3ffda7373eb4cfb77fe38995556397fc6"
   },
-  "modules/crm-DXLAY8Pj.css": {
-   "bytes": 33615,
-   "sha256": "0d06db05ef62ee326ef75c70bc621d1ad8c2308367bba4e063fcf89715ae503b"
+  "modules/crm-LT2eJBLA.js": {
+   "bytes": 172645,
+   "sha256": "032887654d37f270d927837c9369febbd69f1ea2c0c62423b644ce894ed075c2"
   },
   "modules/estimator-06e69a0d.css": {
    "bytes": 22951,
@@ -98,9 +98,9 @@
     "js": 1000000
    },
    "capability": "crm",
-   "css": "modules/crm-DXLAY8Pj.css",
+   "css": "modules/crm-DbcLlRRf.css",
    "id": "crm",
-   "js": "modules/crm-CeTq5xsb.js",
+   "js": "modules/crm-LT2eJBLA.js",
    "title": "CRM"
   },
   "estimator": {
@@ -114,7 +114,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-07T07:26:31.507Z",
+    "built_at": "2026-11-07T07:28:02.519Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
