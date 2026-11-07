@@ -1,8 +1,8 @@
 {
  "version": "v3.42.1",
  "env": "sandbox",
- "built_at": "2026-11-07T08:44:08.453Z",
- "closure_sha256": "12abedd9e28df5c92527d3da0314a7b023bd1aae74ab6fc1ed0c379d4c195e2c",
+ "built_at": "2026-11-07T10:05:27.530Z",
+ "closure_sha256": "ecd5cc0ccffa5f439c24cd65139605dec10a06263c535d8c88265bf56bac10a7",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -15,16 +15,24 @@
    "sha256": "699a0a21274e960a8788a11bc44979c4b404a85bbeffedc4f9c8e02dbbaa0938"
   },
   "index.html": {
-   "bytes": 255423,
-   "sha256": "cb2de36d08d0251814492f22ca54d13c0aee34118170101ddb3f3ed435605a53"
+   "bytes": 255688,
+   "sha256": "d9d2f45ff631613e917f0f99c589c26df43ac074460ccf303b8305a0e0dae031"
   },
-  "modules/crm-CWpO8FJw.js": {
-   "bytes": 326301,
-   "sha256": "a1475ed45c929d9975e465ed82f3f50e5d96a2bfb7602c09100b4c0fb8165e6e"
+  "modules/automations-C0Mti7mp.js": {
+   "bytes": 3094,
+   "sha256": "285433841df90b58dbe58e2046c0e226575132c1dc4243278fb57219ce4508dc"
   },
-  "modules/crm-CdAM8GCy.css": {
-   "bytes": 69958,
-   "sha256": "64fc9ad4296ab87b50275f022034fa13c4d66737a8ebee283cdcc17f945e6562"
+  "modules/automations-d9AQHHgk.css": {
+   "bytes": 1077,
+   "sha256": "a442d6e7b315751ce6ce84ee928ca8690b747e92c802beb105a2d5d1ade549f1"
+  },
+  "modules/crm-BaNlEzqL.js": {
+   "bytes": 359611,
+   "sha256": "42f6fd6589cf6647e93de3a28bba53b4070a954faf90edc4345003e07e50a96b"
+  },
+  "modules/crm-BdZhQZBH.css": {
+   "bytes": 73462,
+   "sha256": "a85057b24f34d2a6ee67212d44816b6fb0a23a0f1afa7230d082917432039130"
   },
   "modules/estimator-06e69a0d.css": {
    "bytes": 22951,
@@ -92,15 +100,26 @@
   }
  },
  "modules": {
+  "automations": {
+   "budget": {
+    "css": 4000,
+    "js": 16000
+   },
+   "capability": "automations",
+   "css": "modules/automations-d9AQHHgk.css",
+   "id": "automations",
+   "js": "modules/automations-C0Mti7mp.js",
+   "title": "Automations"
+  },
   "crm": {
    "budget": {
     "css": 99000,
     "js": 1000000
    },
    "capability": "crm",
-   "css": "modules/crm-CdAM8GCy.css",
+   "css": "modules/crm-BdZhQZBH.css",
    "id": "crm",
-   "js": "modules/crm-CWpO8FJw.js",
+   "js": "modules/crm-BaNlEzqL.js",
    "title": "CRM"
   },
   "estimator": {
@@ -114,7 +133,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-07T08:44:07.494Z",
+    "built_at": "2026-11-07T10:05:26.557Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
