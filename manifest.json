@@ -1,8 +1,8 @@
 {
  "version": "v3.42.1",
  "env": "sandbox",
- "built_at": "2026-11-07T08:17:53.994Z",
- "closure_sha256": "48cc2c07c4d843a7954ad6022c95fc4a70e87f2d29f103f567ce2b9cb5a20305",
+ "built_at": "2026-11-07T08:44:08.453Z",
+ "closure_sha256": "12abedd9e28df5c92527d3da0314a7b023bd1aae74ab6fc1ed0c379d4c195e2c",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,15 +16,15 @@
   },
   "index.html": {
    "bytes": 255423,
-   "sha256": "ca0bee60c331b9d4b916ff37cf6e48f99318589833325676eb50b5d6030ea9b0"
+   "sha256": "cb2de36d08d0251814492f22ca54d13c0aee34118170101ddb3f3ed435605a53"
   },
-  "modules/crm-BymM8px5.js": {
-   "bytes": 285194,
-   "sha256": "ca45760d56962df26d4b2c172a6e2016a415247b1eee9c119d7ea14a7b3b9bd8"
+  "modules/crm-CWpO8FJw.js": {
+   "bytes": 326301,
+   "sha256": "a1475ed45c929d9975e465ed82f3f50e5d96a2bfb7602c09100b4c0fb8165e6e"
   },
-  "modules/crm-Cqhs8yLX.css": {
-   "bytes": 62500,
-   "sha256": "a6515ff563750a36473e9e860a4f28f14813e9a714108a1eb0daa9dcf41c1673"
+  "modules/crm-CdAM8GCy.css": {
+   "bytes": 69958,
+   "sha256": "64fc9ad4296ab87b50275f022034fa13c4d66737a8ebee283cdcc17f945e6562"
   },
   "modules/estimator-06e69a0d.css": {
    "bytes": 22951,
@@ -94,13 +94,13 @@
  "modules": {
   "crm": {
    "budget": {
-    "css": 80000,
+    "css": 99000,
     "js": 1000000
    },
    "capability": "crm",
-   "css": "modules/crm-Cqhs8yLX.css",
+   "css": "modules/crm-CdAM8GCy.css",
    "id": "crm",
-   "js": "modules/crm-BymM8px5.js",
+   "js": "modules/crm-CWpO8FJw.js",
    "title": "CRM"
   },
   "estimator": {
@@ -114,7 +114,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-07T08:17:53.057Z",
+    "built_at": "2026-11-07T08:44:07.494Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
