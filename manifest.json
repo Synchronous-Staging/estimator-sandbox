@@ -1,8 +1,8 @@
 {
- "version": "v3.42.1",
+ "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-07T10:05:27.530Z",
- "closure_sha256": "ecd5cc0ccffa5f439c24cd65139605dec10a06263c535d8c88265bf56bac10a7",
+ "built_at": "2026-11-08T00:21:35.841Z",
+ "closure_sha256": "773545e21a2b7f5c34113bf99975969b2ba41037047e655616897471fb24c13b",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -11,12 +11,12 @@
    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "consent.html": {
-   "bytes": 30080,
-   "sha256": "699a0a21274e960a8788a11bc44979c4b404a85bbeffedc4f9c8e02dbbaa0938"
+   "bytes": 33675,
+   "sha256": "a78151349d4d75d6719f656597ae6d1c97f1c0a501dd377d0425ddb92acb5cb8"
   },
   "index.html": {
-   "bytes": 255688,
-   "sha256": "d9d2f45ff631613e917f0f99c589c26df43ac074460ccf303b8305a0e0dae031"
+   "bytes": 258400,
+   "sha256": "2bc0422977115bfed0494370c20411ed476199b8e9c482c5f01de61241776d76"
   },
   "modules/automations-C0Mti7mp.js": {
    "bytes": 3094,
@@ -50,10 +50,6 @@
    "bytes": 1866,
    "sha256": "771fed281eeb499b287144a060218555ecc0f4d7c4282eadc233e17dc6f7d11d"
   },
-  "modules/tracker-CDfOdhk3.js": {
-   "bytes": 431972,
-   "sha256": "e5cd02afdff654d11f17f4d9dc42f82199cace051880574949755ac885bb566b"
-  },
   "modules/tracker-CH9HUR0r.css": {
    "bytes": 21475,
    "sha256": "e84e197cdc0a5e26399ae6bcd18fd200cafbf1c532465709ebd0b44ff997ee50"
@@ -66,13 +62,13 @@
    "bytes": 3116,
    "sha256": "91ef3a2771ffdadd28d85a9baffb1d3439bf02cce5fc6825b7c8ae45dc16d8b8"
   },
-  "modules/tracker-financials-DSkTUb-T.css": {
-   "bytes": 4662,
-   "sha256": "a3eb44dd88b0916775c17ac2599aebca4453b151a5ef94da2dc40bc45d090e97"
+  "modules/tracker-financials-C2XNNnZI.js": {
+   "bytes": 13956,
+   "sha256": "51f6e22a22c42708054b86463b44557c92ae5efc47192047150fe6e607027273"
   },
-  "modules/tracker-financials-_WKaRYMX.js": {
-   "bytes": 12486,
-   "sha256": "1e6306b3825460b56c81910558b2e0b7dbbe9d2a4569c87e73f168fe11d4c7bf"
+  "modules/tracker-financials-DmEkqS_6.css": {
+   "bytes": 4954,
+   "sha256": "505fbc4e0a56769dad446ebda419a8579d2d64214af3b8a138bcac6619b19c33"
   },
   "modules/tracker-import-76UH20po.css": {
    "bytes": 898,
@@ -82,13 +78,13 @@
    "bytes": 10006,
    "sha256": "5292838e685d7e60345581cfc424de016609073695b259d2bcd817036b819ae3"
   },
-  "modules/tracker-invoicing-BkWMfQw9.css": {
-   "bytes": 9662,
-   "sha256": "e1bca5ee6750e618b4d0b2f183546bdaf97239407675a73e00d27d9bf9bf503e"
+  "modules/tracker-invoicing-Co9Euu8j.css": {
+   "bytes": 10160,
+   "sha256": "35b54e81a98583c2f4180168b7c46a52dfecf6c0f53462cf1d1ccadd73bbd5de"
   },
-  "modules/tracker-invoicing-DfoInxFd.js": {
-   "bytes": 25360,
-   "sha256": "65ef1f0e53a24156c8f82f132313edbb48cf92ca9232260581da41c14a437f77"
+  "modules/tracker-invoicing-Dzu9GmK-.js": {
+   "bytes": 23299,
+   "sha256": "fe96e70a601c6ac80cb960f6248f6cff6bec3596d67cef06859f8acf3bf2a9b1"
   },
   "modules/tracker-monthly-BpI4N7xv.css": {
    "bytes": 1535,
@@ -97,6 +93,10 @@
   "modules/tracker-monthly-Dhit_QoP.js": {
    "bytes": 5963,
    "sha256": "173fd32e45316a8bac2b5cde6d4f6cc4bd35ba8eac22529ae4a84b7580880d7c"
+  },
+  "modules/tracker-zTouSvM9.js": {
+   "bytes": 439806,
+   "sha256": "6b0703f987a06d31eda022435d416df1bbd7be1289fb5bf194a3a07b9016e482"
   }
  },
  "modules": {
@@ -133,7 +133,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-07T10:05:26.557Z",
+    "built_at": "2026-11-08T00:21:34.847Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
@@ -153,12 +153,12 @@
   "tracker": {
    "budget": {
     "css": 26000,
-    "js": 530000
+    "js": 540000
    },
    "capability": null,
    "css": "modules/tracker-CH9HUR0r.css",
    "id": "tracker",
-   "js": "modules/tracker-CDfOdhk3.js",
+   "js": "modules/tracker-zTouSvM9.js",
    "title": "Budget Tracker"
   },
   "tracker-budget": {
@@ -179,9 +179,9 @@
     "js": 14762
    },
    "capability": "financials",
-   "css": "modules/tracker-financials-DSkTUb-T.css",
+   "css": "modules/tracker-financials-DmEkqS_6.css",
    "id": "tracker-financials",
-   "js": "modules/tracker-financials-_WKaRYMX.js",
+   "js": "modules/tracker-financials-C2XNNnZI.js",
    "kind": "view",
    "title": "Financials"
   },
@@ -203,9 +203,9 @@
     "js": 27500
    },
    "capability": "invoicing",
-   "css": "modules/tracker-invoicing-BkWMfQw9.css",
+   "css": "modules/tracker-invoicing-Co9Euu8j.css",
    "id": "tracker-invoicing",
-   "js": "modules/tracker-invoicing-DfoInxFd.js",
+   "js": "modules/tracker-invoicing-Dzu9GmK-.js",
    "kind": "view",
    "title": "Invoicing"
   },
