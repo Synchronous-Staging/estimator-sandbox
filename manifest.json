@@ -1,8 +1,8 @@
 {
  "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-08T03:03:42.311Z",
- "closure_sha256": "d47bcd3ca28fc82db3c12dc6c32ff0c70ce212ba07c8e6ec8bc0425baf0bef70",
+ "built_at": "2026-11-09T08:20:00.654Z",
+ "closure_sha256": "25913074fd447f88b077d38b0ac7c897b95d63ffaf2f9a67cbd513bedf61680b",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,7 +16,7 @@
   },
   "index.html": {
    "bytes": 261118,
-   "sha256": "e2e9cc98f4bd092a7164e44c8809c5da0269dfaeea215ea80b524b0a572becf9"
+   "sha256": "deac96cb71a95e541014c0d344a48a11d3e84ddeddcc6dc1cd48149aab97c93f"
   },
   "modules/automations-C0Mti7mp.js": {
    "bytes": 3094,
@@ -54,9 +54,9 @@
    "bytes": 21475,
    "sha256": "e84e197cdc0a5e26399ae6bcd18fd200cafbf1c532465709ebd0b44ff997ee50"
   },
-  "modules/tracker-CHjnxnIK.js": {
-   "bytes": 440706,
-   "sha256": "4c95b9ec2b49c003ac8bf31bc1345eeb35ef60f33de8d2a56f4137fa3ef5c074"
+  "modules/tracker-COF4mtZM.js": {
+   "bytes": 440942,
+   "sha256": "7de21fdb605d69fba874e814575f399c035ca2c43772b5dedf37bc5e7e4edc90"
   },
   "modules/tracker-budget-D13Rl9qU.js": {
    "bytes": 8000,
@@ -133,7 +133,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-08T03:03:41.248Z",
+    "built_at": "2026-11-09T08:19:59.559Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
@@ -158,7 +158,7 @@
    "capability": null,
    "css": "modules/tracker-CH9HUR0r.css",
    "id": "tracker",
-   "js": "modules/tracker-CHjnxnIK.js",
+   "js": "modules/tracker-COF4mtZM.js",
    "title": "Budget Tracker"
   },
   "tracker-budget": {
