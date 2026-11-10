@@ -1,8 +1,8 @@
 {
  "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-10T02:03:54.707Z",
- "closure_sha256": "1c9acd4512c4ab033a9e9c32745cb376904f9eaa7d34b9422d8630a5b36dd064",
+ "built_at": "2026-11-10T06:35:56.754Z",
+ "closure_sha256": "b4cc0d8e4bb92d3d3eba1d5cd5a834f2084dc87216fa32660b1206aa73ab1613",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,7 +16,7 @@
   },
   "index.html": {
    "bytes": 265317,
-   "sha256": "2fcb2552a57fce678516150837d6ddbf8f47430966357cd155e905d82ff2c8fe"
+   "sha256": "01ac2deb888abe4c22577127b97c032559d767892c06741af95d5dc6860b933c"
   },
   "modules/automations-B1OfPqjs.js": {
    "bytes": 3359,
@@ -34,13 +34,13 @@
    "bytes": 360118,
    "sha256": "5c0eb51876b151f99fcf1e50dc9a8530d88888c3e4ad9d40f00884e1f7e406be"
   },
-  "modules/estimator-06e69a0d.css": {
-   "bytes": 22951,
-   "sha256": "06e69a0d114e43990c775b3afb79e3e3fd3ddf00057eee999c0d2f4137deba05"
+  "modules/estimator-2af1ce49.js": {
+   "bytes": 1009352,
+   "sha256": "2af1ce4903630a7aea9137ad9d5f84b708906247718929cedb5a664f2df0104e"
   },
-  "modules/estimator-dc3189e1.js": {
-   "bytes": 984384,
-   "sha256": "dc3189e1ce50aedfabe0f9577bcb468f58519300a5ab56bde75330ad5cd57eb8"
+  "modules/estimator-7145a98b.css": {
+   "bytes": 23397,
+   "sha256": "7145a98b789219bd3c073329608d91d585df2c179a15356c2ae8949a3852eac6"
   },
   "modules/hello-BoVXc-Gi.css": {
    "bytes": 112,
@@ -133,18 +133,18 @@
   "estimator": {
    "budget": {
     "css": 120000,
-    "js": 1000000
+    "js": 1200000
    },
    "capability": "estimating",
-   "css": "modules/estimator-06e69a0d.css",
+   "css": "modules/estimator-7145a98b.css",
    "id": "estimator",
-   "js": "modules/estimator-dc3189e1.js",
+   "js": "modules/estimator-2af1ce49.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-10T02:03:53.644Z",
-    "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
+    "built_at": "2026-11-10T06:35:55.709Z",
+    "source_commit": "1cb07486b345dcdc3f8f97f69b916b010524929b",
     "source_repo": "Synchronous-Building-Automation/estimator",
-    "version": "0.7.0"
+    "version": "0.7.1"
    }
   },
   "hello": {
