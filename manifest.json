@@ -1,8 +1,8 @@
 {
  "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-10T00:45:02.069Z",
- "closure_sha256": "4fc4f45c028610e648ddb64164d93a8391464b28d84dd94aa79b696e78dd180b",
+ "built_at": "2026-11-10T02:03:54.707Z",
+ "closure_sha256": "1c9acd4512c4ab033a9e9c32745cb376904f9eaa7d34b9422d8630a5b36dd064",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -15,8 +15,8 @@
    "sha256": "a78151349d4d75d6719f656597ae6d1c97f1c0a501dd377d0425ddb92acb5cb8"
   },
   "index.html": {
-   "bytes": 264874,
-   "sha256": "e41ad02234ff698903e1b8cd3a159a9376d09fb92629db2ad5782ea5584496d2"
+   "bytes": 265317,
+   "sha256": "2fcb2552a57fce678516150837d6ddbf8f47430966357cd155e905d82ff2c8fe"
   },
   "modules/automations-B1OfPqjs.js": {
    "bytes": 3359,
@@ -50,13 +50,13 @@
    "bytes": 1866,
    "sha256": "771fed281eeb499b287144a060218555ecc0f4d7c4282eadc233e17dc6f7d11d"
   },
-  "modules/help-ByQAoP5x.css": {
-   "bytes": 2884,
-   "sha256": "84eab8d93c45fc8d736e12490aa9cc89a7d801d136e5831e54d357d6e9e2ccb5"
+  "modules/help-BwVn9lEO.js": {
+   "bytes": 137431,
+   "sha256": "7583466c26f4d0aeeb8a4b3e3b61ef69a07fddfd80403592dc94b47e44e71ff1"
   },
-  "modules/help-LB5dCNav.js": {
-   "bytes": 38470,
-   "sha256": "83394ddd84ff9e431e09f4f45f57f087871fe435babeb5cf6138a1e8b12fb373"
+  "modules/help-mFBB5h9M.css": {
+   "bytes": 3059,
+   "sha256": "871b92190ebf1d1c8a86ab70ae0902fb76708cc0b3ea800a6251053b631eb326"
   },
   "modules/tracker-CBuuL5G5.js": {
    "bytes": 441771,
@@ -141,7 +141,7 @@
    "js": "modules/estimator-dc3189e1.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-10T00:45:01.000Z",
+    "built_at": "2026-11-10T02:03:53.644Z",
     "source_commit": "c37a6b0382c458c60fb133f64cf9586f68a38be4",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.0"
@@ -164,9 +164,9 @@
     "js": 240000
    },
    "capability": null,
-   "css": "modules/help-ByQAoP5x.css",
+   "css": "modules/help-mFBB5h9M.css",
    "id": "help",
-   "js": "modules/help-LB5dCNav.js",
+   "js": "modules/help-BwVn9lEO.js",
    "kind": "dialog",
    "title": "Help"
   },
