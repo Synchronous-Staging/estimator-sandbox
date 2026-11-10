@@ -1,8 +1,8 @@
 {
  "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-10T06:48:45.814Z",
- "closure_sha256": "7b8c49270c4dd67c809507eedbc8ea8be868128f9ecbb799fc7f142d924fcac0",
+ "built_at": "2026-11-10T07:00:55.907Z",
+ "closure_sha256": "fb3a63dab4db74a003c363ca8030945cc3e358f3e6f06441cdc010669cd9dc49",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,7 +16,7 @@
   },
   "index.html": {
    "bytes": 265317,
-   "sha256": "3837bdfe2bb5f4bda74a1f394e1e7b6e35d2e816b09dab438c9aab4c6d65621f"
+   "sha256": "473a3934d10a226e2d899a306f03083fb566eb936ae29114611d9b6fc29f0ae5"
   },
   "modules/automations-B1OfPqjs.js": {
    "bytes": 3359,
@@ -38,9 +38,9 @@
    "bytes": 23570,
    "sha256": "01523afe63eddced214626dea394622dce3e46ca8b92c59a61a833a4bbdfbf2c"
   },
-  "modules/estimator-98b75065.js": {
-   "bytes": 1067718,
-   "sha256": "98b750650f995a4bed35cf9af0e102757b5cbd0df37991ab564d7c60d6a46784"
+  "modules/estimator-61958861.js": {
+   "bytes": 1069183,
+   "sha256": "619588618f070fb589ff699b6add94771c2d8ec94632cd94e1a49fb799e0b64d"
   },
   "modules/hello-BoVXc-Gi.css": {
    "bytes": 112,
@@ -138,11 +138,11 @@
    "capability": "estimating",
    "css": "modules/estimator-01523afe.css",
    "id": "estimator",
-   "js": "modules/estimator-98b75065.js",
+   "js": "modules/estimator-61958861.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-10T06:48:44.614Z",
-    "source_commit": "0af19009adcc05a15db7d7dd9b7dd6fb15b59b26",
+    "built_at": "2026-11-10T07:00:54.699Z",
+    "source_commit": "36835b31e4f0ef83aee7b639ee9d764580be2126",
     "source_repo": "Synchronous-Building-Automation/estimator",
     "version": "0.7.1"
    }
