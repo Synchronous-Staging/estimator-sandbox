@@ -1,8 +1,8 @@
 {
  "version": "v3.44",
  "env": "sandbox",
- "built_at": "2026-11-10T09:06:28.659Z",
- "closure_sha256": "6a8d2e9447d86ec511a54b7e75eafb3af165718ddb86a5a53ed511f67ec78eae",
+ "built_at": "2026-11-12T07:55:43.687Z",
+ "closure_sha256": "d1cc3196f7c0c56dec79b3172d52354dc2dd6af0f02b063c7c7e5308cd6b4eb2",
  "contract": "1",
  "contract_sha256": "7ad296d9c49f381b841db954b1645ce34e7d18b520b434ab3f7b6e09835c9526",
  "files": {
@@ -16,7 +16,7 @@
   },
   "index.html": {
    "bytes": 265317,
-   "sha256": "6a43d9045b4da21088cb2467b9db9da0aad3b083a07002bad25d965ffd54eab5"
+   "sha256": "3149d162c50bffd4e2d4e9a003517ac64997321d9e47db32a5ecb1dfa371a2a3"
   },
   "modules/automations-B1OfPqjs.js": {
    "bytes": 3359,
@@ -34,13 +34,13 @@
    "bytes": 360118,
    "sha256": "5c0eb51876b151f99fcf1e50dc9a8530d88888c3e4ad9d40f00884e1f7e406be"
   },
-  "modules/estimator-904ee09f.js": {
-   "bytes": 1071781,
-   "sha256": "904ee09fb178b90e8e56308be1f74c9b08a027f3fd9dc5de804a109bec344da1"
+  "modules/estimator-2da56c5b.css": {
+   "bytes": 23566,
+   "sha256": "2da56c5bff2f3a6c5ad84dd345d98320f838b688c9ba1e9dfda238362a5a2e60"
   },
-  "modules/estimator-e64be0d0.css": {
-   "bytes": 23530,
-   "sha256": "e64be0d0b3ea5821f11b5dc7f60483a12f1d464a65d607d538e47dd50f989a44"
+  "modules/estimator-cc31dafe.js": {
+   "bytes": 1083371,
+   "sha256": "cc31dafe557a7b3f4cabac5aeaafb4e721ecee257997c0e601ae0f77f0123c6a"
   },
   "modules/hello-BoVXc-Gi.css": {
    "bytes": 112,
@@ -136,15 +136,15 @@
     "js": 1200000
    },
    "capability": "estimating",
-   "css": "modules/estimator-e64be0d0.css",
+   "css": "modules/estimator-2da56c5b.css",
    "id": "estimator",
-   "js": "modules/estimator-904ee09f.js",
+   "js": "modules/estimator-cc31dafe.js",
    "title": "Estimator",
    "vendored": {
-    "built_at": "2026-11-10T09:06:27.576Z",
-    "source_commit": "525096ddc3c5a303e6e4270ae80e4ac56a585927",
+    "built_at": "2026-11-12T07:55:24.034Z",
+    "source_commit": "3c57c75036d51833055a91ea2c98ebd5cf12bc74",
     "source_repo": "Synchronous-Building-Automation/estimator",
-    "version": "0.7.1"
+    "version": "0.8.1"
    }
   },
   "hello": {
